@@ -1,0 +1,39 @@
+name: Ultraviolet-Static Setup
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    - name: Install Ultraviolet-Static
+      run: npm install -g ultraviolet-static
+
+    - name: Create UV_TOKEN environment variable
+      uses: actions/setup-env@v2
+      with:
+        UV_TOKEN: ${{ secrets.UV_TOKEN }}
+
+    - name: Create uvs.json file
+      run: echo '{ "target": "https://now.gg/apps/roblox-corporation/5349/roblox.html", "server": { "host": "0.0.0.0", "port": 3000 } }' > uvs.json
+
+    - name: Create setup.sh file
+      run: echo '#!/bin/bash
+uvs create
+uvs run
+' > setup.sh
+
+    - name: Make setup.sh executable
+      run: chmod +x setup.sh
